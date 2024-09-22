@@ -73,6 +73,7 @@ app = FastAPI()
 def checkSolar_panel(image):
     classes_names = ['Clean', 'Damaged', 'Dirty']
     model = tf.keras.models.load_model("model.keras")
+    image = image.reshape((128,128,3))
     prediction = model.predict(tf.expand_dims(image, axis=0))
     prediction = classes_names[np.argmax(prediction)]
     return classes_names
