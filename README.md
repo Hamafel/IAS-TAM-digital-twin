@@ -29,6 +29,10 @@ In the `hardware` folder, you will find the code responsible for gathering senso
 
 Each sensor’s data is sent to the API endpoint for issue detection and BCF generation.
 
+## 5. ifc file drive link
+
+https://drive.google.com/file/d/1SPRaEKwZyGShNh63qnJ898aiEn0lGhIE/view?usp=sharing
+
 ## Project Structure
 -`software`: Contain the software code from endpoint,model and json template for the topics
 -`Tpoics` : Contain the json templates for the topics
