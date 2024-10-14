@@ -10,6 +10,7 @@ We developed a Convolutional Neural Network (CNN) model that classifies the cond
 - **Damaged**
 
 This classification helps in automating the maintenance process by detecting when panels need cleaning or repairs.
+We used a docker container to host our model on "hugging face" so that we can connect to the endpoint.
 
 ## 2. API Endpoint for Sensor Data and BCF File Generation
 
