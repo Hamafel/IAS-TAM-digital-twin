@@ -3,7 +3,8 @@ from main import TecX
 import json
 from typing import Dict, Any
 from pydantic import BaseModel
-
+from fastapi.responses import FileResponse
+import os
 
 app = FastAPI()
 
@@ -35,24 +36,23 @@ def getreport(info:ReportInfo):
                         title1 = "solar panel damage"
                         bcfzip_elements.append(tecx.selectTopic(json_data,title1))
                 elif i==1 and check:
-                    print(i,check)
                     title_1 = "HVAC systems" 
                     title_2 = "Co2 monitoring"
                     bcfzip_elements.append(tecx.selectTopic(json_data,title_1))
                     bcfzip_elements.append(tecx.selectTopic(json_data,title_2))
                 elif i==2 and check:
-                    print(i,check)
                     title_1 = "Temperature level monitoring"
                     title_2 = "Air conditioning system"
                     bcfzip_elements.append(tecx.selectTopic(json_data,title_1))
                     bcfzip_elements.append(tecx.selectTopic(json_data,title_2))
-        print(bcfzip_elements)
         tecx.zip_bcf_files(bcfzip_elements,"./","file.bcfzip")
         tecx.delFolers(bcfzip_elements)
-                    
-
-
-        return {"message":"reccieved","statuCode":200}
+        if not os.path.exists("./file.bcfzip"):
+            raise HTTPException(status_code=500, detail="BCFZIP file not created")
+        
+        # Return the file for download
+        tecx.load_to_bucket()
+        return {"message":"success"}
     
     except KeyError as e:
         raise HTTPException(status_code=400, detail=f"Missing key: {e}")

@@ -7,12 +7,17 @@ import requests
 import json
 import zipfile
 import shutil
+from supabase import create_client, Client
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class TecX:
     def __init__(self,image,temp,co2):
         self.image = image
         self.temp = temp
         self.co2 = co2
+        self.bucket_name = "Temp"
     
     def zip_bcf_files(self,elements, folder_path, output_bcf):
         with zipfile.ZipFile(output_bcf, 'w', zipfile.ZIP_DEFLATED) as zipf:
@@ -88,7 +93,8 @@ class TecX:
 
     
     def checkSolar_panel(self):
-        API_TOKEN = os.environ.get("API_TOKEN")
+        API_TOKEN = os.getenv("API_TOKEN")
+        
 
         # Your Hugging Face model URL
         API_URL = "https://aymenfk-tecx-model.hf.space/predict"
@@ -127,6 +133,16 @@ class TecX:
                 self.create_xml_from_json(topic, f"./{topic['topic']['Guid']}/markup.bcf")
                 return topic["topic"]["Guid"]
 
-
+    def load_to_bucket(self):
+        SUPABASE_URL = os.getenv("SUPABASE_URL")
+        SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+        supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        file_name = str(uuid.uuid4())+".bcfzip"
+        with open("file.bcfzip","rb") as f:
+            response_supa = supabase.storage.from_(self.bucket_name).upload(file_name, f)
+            if response_supa.status_code != 200:
+                print(f"Error: {response_supa.json()['error']}")
+            else:
+                print(f"File uploaded successfully: {response_supa.json()['Key']}")
 
 
